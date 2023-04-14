@@ -32,6 +32,8 @@ import org.ta4j.core.indicators.helpers.LowPriceIndicator;
 import org.ta4j.core.indicators.helpers.LowestValueIndicator;
 import org.ta4j.core.num.Num;
 
+import static org.ta4j.core.num.NaN.NaN;
+
 /**
  * Stochastic oscillator K.
  *
@@ -65,6 +67,10 @@ public class StochasticOscillatorKIndicator extends CachedIndicator<Num> {
 
     @Override
     protected Num calculate(int index) {
+        if (index + 1 < getUnstableBars()) {
+            return NaN;
+        }
+
         HighestValueIndicator highestHigh = new HighestValueIndicator(highPriceIndicator, barCount);
         LowestValueIndicator lowestMin = new LowestValueIndicator(lowPriceIndicator, barCount);
 

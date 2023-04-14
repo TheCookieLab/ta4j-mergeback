@@ -26,6 +26,8 @@ package org.ta4j.core.indicators;
 import org.ta4j.core.Indicator;
 import org.ta4j.core.num.Num;
 
+import static org.ta4j.core.num.NaN.NaN;
+
 /**
  * Stochastic oscillator D.
  *
@@ -47,6 +49,10 @@ public class StochasticOscillatorDIndicator extends CachedIndicator<Num> {
 
     @Override
     protected Num calculate(int index) {
+        if (index + 1 < getUnstableBars()) {
+            return NaN;
+        }
+
         return indicator.getValue(index);
     }
 

@@ -30,6 +30,8 @@ import org.ta4j.core.indicators.helpers.HighestValueIndicator;
 import org.ta4j.core.indicators.helpers.LowestValueIndicator;
 import org.ta4j.core.num.Num;
 
+import static org.ta4j.core.num.NaN.NaN;
+
 /**
  * The Stochastic RSI Indicator.
  * 
@@ -77,6 +79,9 @@ public class StochasticRSIIndicator extends CachedIndicator<Num> {
 
     @Override
     protected Num calculate(int index) {
+        if (index + 1 < getUnstableBars()) {
+            return NaN;
+        }
         Num minRsiValue = minRsi.getValue(index);
         return rsi.getValue(index).minus(minRsiValue).dividedBy(maxRsi.getValue(index).minus(minRsiValue));
     }

@@ -26,6 +26,8 @@ package org.ta4j.core.indicators;
 import org.ta4j.core.Indicator;
 import org.ta4j.core.num.Num;
 
+import static org.ta4j.core.num.NaN.NaN;
+
 /**
  * Zero-lag exponential moving average indicator.
  *
@@ -50,14 +52,10 @@ public class ZLEMAIndicator extends RecursiveCachedIndicator<Num> {
 
     @Override
     protected Num calculate(int index) {
-        if (index + 1 < barCount) {
-            // Starting point of the ZLEMA
-            return new SMAIndicator(indicator, barCount).getValue(index);
+        if (index + 1 < getUnstableBars()) {
+            return NaN;
         }
-        if (index == 0) {
-            // If the barCount is bigger than the indicator's value count
-            return indicator.getValue(0);
-        }
+
         Num zlemaPrev = getValue(index - 1);
         return k.multipliedBy(numOf(2).multipliedBy(indicator.getValue(index)).minus(indicator.getValue(index - lag)))
                 .plus(one().minus(k).multipliedBy(zlemaPrev));

@@ -26,6 +26,8 @@ package org.ta4j.core.indicators;
 import org.ta4j.core.Indicator;
 import org.ta4j.core.num.Num;
 
+import static org.ta4j.core.num.NaN.NaN;
+
 /**
  * Simple moving average (SMA) indicator.
  *
@@ -46,6 +48,10 @@ public class SMAIndicator extends CachedIndicator<Num> {
 
     @Override
     protected Num calculate(int index) {
+        if (index + 1 < getUnstableBars()) {
+            return NaN;
+        }
+
         Num sum = zero();
         for (int i = Math.max(0, index - barCount + 1); i <= index; i++) {
             sum = sum.plus(indicator.getValue(i));

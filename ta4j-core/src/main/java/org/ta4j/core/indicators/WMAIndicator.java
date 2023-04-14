@@ -26,6 +26,8 @@ package org.ta4j.core.indicators;
 import org.ta4j.core.Indicator;
 import org.ta4j.core.num.Num;
 
+import static org.ta4j.core.num.NaN.NaN;
+
 /**
  * WMA indicator.
  */
@@ -42,8 +44,8 @@ public class WMAIndicator extends CachedIndicator<Num> {
 
     @Override
     protected Num calculate(int index) {
-        if (index == 0) {
-            return indicator.getValue(0);
+        if (index + 1 < getUnstableBars()) {
+            return NaN;
         }
 
         Num value = numOf(0);

@@ -51,7 +51,7 @@ public class RWIHighIndicator extends CachedIndicator<Num> {
 
     @Override
     protected Num calculate(int index) {
-        if (index - barCount + 1 < getBarSeries().getBeginIndex()) {
+        if (index + 1 < getUnstableBars()) {
             return NaN.NaN;
         }
 

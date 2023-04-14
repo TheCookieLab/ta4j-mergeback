@@ -26,6 +26,8 @@ package org.ta4j.core.indicators;
 import org.ta4j.core.Indicator;
 import org.ta4j.core.num.Num;
 
+import static org.ta4j.core.num.NaN.NaN;
+
 /**
  * Triple exponential moving average indicator.
  *
@@ -62,6 +64,9 @@ public class TripleEMAIndicator extends CachedIndicator<Num> {
 
     @Override
     protected Num calculate(int index) {
+        if (index + 1 < getUnstableBars()) {
+            return NaN;
+        }
         // trix = 3 * ( ema - emaEma ) + emaEmaEma
         return numOf(3).multipliedBy(ema.getValue(index).minus(emaEma.getValue(index))).plus(emaEmaEma.getValue(index));
     }

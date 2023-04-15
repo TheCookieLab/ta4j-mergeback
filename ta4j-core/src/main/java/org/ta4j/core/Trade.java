@@ -24,6 +24,7 @@
 package org.ta4j.core;
 
 import java.io.Serializable;
+import java.time.ZonedDateTime;
 import java.util.Objects;
 
 import org.ta4j.core.analysis.cost.CostModel;
@@ -107,6 +108,11 @@ public class Trade implements Serializable {
      * The cost model for trade execution
      */
     private CostModel costModel;
+
+    /***
+     * The trade time stamp
+     */
+    private ZonedDateTime dateTime;
 
     /**
      * Constructor.

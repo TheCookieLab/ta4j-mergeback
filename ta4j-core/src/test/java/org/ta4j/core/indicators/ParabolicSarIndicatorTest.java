@@ -25,7 +25,9 @@ package org.ta4j.core.indicators;
 
 import static org.junit.Assert.assertEquals;
 import static org.ta4j.core.TestUtils.assertNumEquals;
+import static org.ta4j.core.num.NaN.NaN;
 
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
@@ -43,6 +45,32 @@ public class ParabolicSarIndicatorTest extends AbstractIndicatorTest<Indicator<N
 
     public ParabolicSarIndicatorTest(Function<Number, Num> numFunction) {
         super(numFunction);
+    }
+
+    @Test
+    public void growingBarSeriesTest() {
+        ZonedDateTime now = ZonedDateTime.now();
+
+        List<Bar> bars = new ArrayList<>();
+        bars.add(new MockBar(now, 0, 0, 0, 0, 0, 0, 0, numFunction));
+
+        MockBarSeries mockBarSeries = new MockBarSeries(bars);
+        mockBarSeries.setMaximumBarCount(4);
+
+        mockBarSeries.addBar(new MockBar(now.plusSeconds(1), 1, 1, 1, 1, 0, 0, 0, numFunction));
+        mockBarSeries.addBar(new MockBar(now.plusSeconds(2), 2, 2, 2, 2, 0, 0, 0, numFunction));
+        mockBarSeries.addBar(new MockBar(now.plusSeconds(3), 3, 3, 3, 3, 0, 0, 0, numFunction));
+        mockBarSeries.addBar(new MockBar(now.plusSeconds(4), 4, 4, 4, 4, 0, 0, 0, numFunction));
+        mockBarSeries.addBar(new MockBar(now.plusSeconds(5), 5, 5, 5, 5, 0, 0, 0, numFunction));
+
+        ParabolicSarIndicator sar = new ParabolicSarIndicator(mockBarSeries);
+
+        assertNumEquals(NaN, sar.getValue(0));
+        assertNumEquals(1,sar.getValue(1));
+        assertNumEquals(2,sar.getValue(2));
+        assertNumEquals(3,sar.getValue(3));
+        assertNumEquals(4,sar.getValue(4));
+        assertNumEquals(5,sar.getValue(5));
     }
 
     @Test
@@ -100,8 +128,8 @@ public class ParabolicSarIndicatorTest extends AbstractIndicatorTest<Indicator<N
     public void startWithDownAndUpTrendTest() {
         List<Bar> bars = new ArrayList<>();
         bars.add(new MockBar(4261.48, 4285.08, 4485.39, 4200.74, numFunction)); // The first daily candle of BTCUSDT in
-                                                                                // the Binance cryptocurrency exchange.
-                                                                                // 17 Aug 2017
+        // the Binance cryptocurrency exchange.
+        // 17 Aug 2017
         bars.add(new MockBar(4285.08, 4108.37, 4371.52, 3938.77, numFunction)); // starting with down trend
         bars.add(new MockBar(4108.37, 4139.98, 4184.69, 3850.00, numFunction)); // hold trend...
         bars.add(new MockBar(4120.98, 4086.29, 4211.08, 4032.62, numFunction));

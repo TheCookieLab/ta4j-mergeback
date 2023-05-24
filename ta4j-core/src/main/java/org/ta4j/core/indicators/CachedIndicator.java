@@ -108,13 +108,13 @@ public abstract class CachedIndicator<T> extends AbstractIndicator<T> {
             }
             increaseLengthTo(removedBarsCount, maximumResultCount);
             highestResultIndex = removedBarsCount;
-            result = results.get(0);
+            result = results.get(index);
             if (result == null) {
                 // It should be "result = calculate(removedBarsCount);".
                 // We use "result = calculate(0);" as a workaround
                 // to fix issue #120 (https://github.com/mdeverdelhan/ta4j/issues/120).
-                result = calculate(0);
-                results.set(0, result);
+                result = calculate(index);
+                results.set(index, result);
             }
         } else {
             if (index == series.getEndIndex()) {
@@ -164,7 +164,7 @@ public abstract class CachedIndicator<T> extends AbstractIndicator<T> {
         } else {
             // First use of cache
             assert results.isEmpty() : "Cache results list should be empty";
-            results.addAll(Collections.nCopies(Math.min(index + 1, maxLength), null));
+            results.addAll(Collections.nCopies(Math.max(index + 1, maxLength), null));
         }
     }
 

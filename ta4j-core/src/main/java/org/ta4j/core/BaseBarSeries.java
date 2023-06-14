@@ -485,6 +485,7 @@ public class BaseBarSeries implements BarSeries {
             }
             // Updating removed bars count
             removedBarsCount += nbBarsToRemove;
+            seriesBeginIndex += nbBarsToRemove;
         }
     }
 

@@ -1,19 +1,19 @@
 /**
  * The MIT License (MIT)
- *
+ * <p>
  * Copyright (c) 2017-2023 Ta4j Organization & respective
  * authors (see AUTHORS)
- *
+ * <p>
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
  * the Software without restriction, including without limitation the rights to
  * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
  * the Software, and to permit persons to whom the Software is furnished to do so,
  * subject to the following conditions:
- *
+ * <p>
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
- *
+ * <p>
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
  * FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
@@ -98,49 +98,34 @@ public abstract class CachedIndicator<T> extends AbstractIndicator<T> {
 
         final int removedBarsCount = series.getRemovedBarsCount();
         final int maximumResultCount = series.getMaximumBarCount();
+        final int seriesEndIndex = series.getEndIndex();
+        final int innerIndex = index + removedBarsCount;
 
         T result;
-        if (index < removedBarsCount) {
-            // Result already removed from cache
-            if (log.isTraceEnabled()) {
-                log.trace("{}: result from bar {} already removed from cache, use {}-th instead",
-                        getClass().getSimpleName(), index, removedBarsCount);
-            }
-            increaseLengthTo(removedBarsCount, maximumResultCount);
-            highestResultIndex = removedBarsCount;
-            result = results.get(index);
-            if (result == null) {
-                // It should be "result = calculate(removedBarsCount);".
-                // We use "result = calculate(0);" as a workaround
-                // to fix issue #120 (https://github.com/mdeverdelhan/ta4j/issues/120).
-                result = calculate(index);
-                results.set(index, result);
-            }
+
+        if (innerIndex == series.getEndIndex()) {
+            // Don't cache result if last bar
+            result = calculate(innerIndex);
         } else {
-            if (index == series.getEndIndex()) {
-                // Don't cache result if last bar
-                result = calculate(index);
+            increaseLengthTo(innerIndex, maximumResultCount);
+            if (innerIndex > highestResultIndex) {
+                // Result not calculated yet
+                highestResultIndex = innerIndex;
+                result = calculate(innerIndex);
+                results.set(index, result);
             } else {
-                increaseLengthTo(index, maximumResultCount);
-                if (index > highestResultIndex) {
-                    // Result not calculated yet
-                    highestResultIndex = index;
-                    result = calculate(index);
-                    results.set(results.size() - 1, result);
-                } else {
-                    // Result covered by current cache
-                    int resultInnerIndex = results.size() - 1 - (highestResultIndex - index);
-                    result = results.get(resultInnerIndex);
-                    if (result == null) {
-                        result = calculate(index);
-                        results.set(resultInnerIndex, result);
-                    }
+                // Result covered by current cache
+                int resultInnerIndex = results.size() - 1 - (highestResultIndex - innerIndex);
+                result = results.get(resultInnerIndex);
+                if (result == null) {
+                    result = calculate(innerIndex);
+                    results.set(resultInnerIndex, result);
                 }
             }
-
         }
+
         if (log.isTraceEnabled()) {
-            log.trace("{}({}): {}", this, index, result);
+            log.trace("{}({}): {}", this, innerIndex, result);
         }
         return result;
     }

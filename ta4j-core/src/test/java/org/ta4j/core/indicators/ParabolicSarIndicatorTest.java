@@ -66,11 +66,11 @@ public class ParabolicSarIndicatorTest extends AbstractIndicatorTest<Indicator<N
         ParabolicSarIndicator sar = new ParabolicSarIndicator(mockBarSeries);
 
         assertNumEquals(NaN, sar.getValue(0));
-        assertNumEquals(1,sar.getValue(1));
-        assertNumEquals(2,sar.getValue(2));
-        assertNumEquals(3,sar.getValue(3));
-        assertNumEquals(4,sar.getValue(4));
-        assertNumEquals(5,sar.getValue(5));
+        assertNumEquals(3,sar.getValue(1));
+        assertNumEquals(4,sar.getValue(2));
+        assertNumEquals(5,sar.getValue(3));
+        assertNumEquals(6,sar.getValue(4));
+        assertNumEquals(7,sar.getValue(5));
     }
 
     @Test

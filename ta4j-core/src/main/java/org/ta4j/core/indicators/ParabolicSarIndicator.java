@@ -46,7 +46,7 @@ import org.ta4j.core.num.Num;
  * @see <a href="https://www.investopedia.com/terms/p/parabolicindicator.asp">
  *      https://www.investopedia.com/terms/p/parabolicindicator.asp</a>
  */
-public class ParabolicSarIndicator extends RecursiveCachedIndicator<Num> {
+public class ParabolicSarIndicator extends CachedIndicator<Num> {
 
     private final Map<ZonedDateTime, Boolean> isUpTrendMap = new HashMap<>();
     private final Map<ZonedDateTime, Num> lastExtreme = new HashMap<>();
@@ -124,8 +124,9 @@ public class ParabolicSarIndicator extends RecursiveCachedIndicator<Num> {
             return sar;
         }
 
-        final Num priorSar = getValue(index - 1);
-        final Bar priorBar = getBarSeries().getBar(index - 1);
+        final int previousIndex = index - 1;
+        final Num priorSar = getValue(previousIndex);
+        final Bar priorBar = getBarSeries().getBar(previousIndex);
         is_up_trend = isUpTrendMap.get(priorBar.getEndTime());
 
         Num currentExtremePoint = lastExtreme.get(priorBar.getEndTime());
